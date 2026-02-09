@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#0A1628">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>SOM - Sahabat Orang Miskin</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0A1628;font-family:'Nunito',sans-serif;color:#E8ECF0;-webkit-tap-highlight-color:transparent;overflow:hidden}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(-12px)}to{opacity:1;transform:translateX(0)}}
+@keyframes typing{0%{content:'.'} 33%{content:'..'} 66%{content:'...'}}
+.fade-up{animation:fadeUp .4s ease-out forwards}
+.slide-in{animation:slideIn .3s ease-out forwards}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:#1E3550;border-radius:4px}
+input{font-family:'Nunito',sans-serif}
+button{font-family:'Nunito',sans-serif;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:active{transform:scale(.97)}
+
+.app{width:100%;max-width:420px;margin:0 auto;height:100vh;height:100dvh;background:#0A1628;position:relative;overflow:hidden}
+.screen{display:none;height:100%;flex-direction:column}
+.screen.active{display:flex}
+
+/* Splash */
+.splash{align-items:center;justify-content:center;padding:32px;text-align:center;background:linear-gradient(170deg,#0A1628 0%,#0D2137 50%,#0A1628 100%)}
+.splash-icon{font-size:72px;margin-bottom:16px;filter:drop-shadow(0 4px 20px rgba(0,200,83,.3))}
+.splash h1{font-size:36px;font-weight:900;color:#00C853;letter-spacing:-1px;text-shadow:0 2px 20px rgba(0,200,83,.25)}
+.splash .subtitle{font-size:17px;color:#E8ECF0;margin-top:4px;font-weight:700}
+.splash .desc{font-size:15px;color:#8899AA;margin-top:8px;line-height:1.5;max-width:280px}
+.splash .tagline{font-size:13px;color:#FFB300;margin-top:24px;font-style:italic;letter-spacing:.5px}
+.price-tag{display:inline-flex;align-items:baseline;gap:4px;background:rgba(0,200,83,.1);padding:8px 16px;border-radius:10px;margin-top:24px}
+.price-tag .amount{font-size:24px;font-weight:900;color:#00C853}
+.price-tag .period{font-size:13px;color:#8899AA}
+
+/* Buttons */
+.btn{background:#00C853;color:#000;border:none;border-radius:14px;padding:16px 32px;font-size:16px;font-weight:800;width:100%;max-width:300px;margin-top:32px;letter-spacing:.5px;box-shadow:0 4px 20px rgba(0,200,83,.3)}
+.btn:disabled{opacity:.4}
+.btn-danger{background:#FF5252;color:#fff;border:none;border-radius:14px;padding:14px 28px;font-size:15px;font-weight:700;width:100%;margin-top:12px;box-shadow:0 4px 16px rgba(255,82,82,.3)}
+
+/* Forms */
+.form-screen{padding:32px;justify-content:center;min-height:100vh}
+.form-screen .icon{font-size:48px;margin-bottom:16px}
+.form-screen h2{font-size:24px;font-weight:800;margin-bottom:8px}
+.form-screen .desc{font-size:14px;color:#8899AA;margin-bottom:32px;line-height:1.5}
+.label{font-size:13px;font-weight:700;color:#8899AA;margin-bottom:8px;letter-spacing:1px;text-transform:uppercase}
+.input{background:#1A2D47;color:#E8ECF0;border:2px solid #1E3550;border-radius:14px;padding:16px 20px;font-size:16px;width:100%;outline:none;transition:border .2s}
+.input:focus{border-color:#00C853}
+.input-otp{font-size:24px;text-align:center;letter-spacing:8px;font-weight:800;font-family:monospace}
+.hint{font-size:12px;color:#5A6A7A;margin-top:16px;text-align:center}
+.info-box{margin-top:40px;padding:20px;background:#132238;border-radius:16px;border:1px solid #1E3550}
+.info-box p{font-size:13px;color:#8899AA;line-height:1.6}
+.error{color:#FF5252;font-size:13px;margin-top:8px}
+
+/* Header */
+.header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;background:#132238;border-bottom:1px solid #1E3550;flex-shrink:0}
+.header h1{font-size:18px;font-weight:800;color:#00C853;display:flex;align-items:center;gap:8px}
+.header-btn{background:none;border:none;color:#8899AA;font-size:22px;padding:8px}
+.status-bar{padding:6px 20px;background:rgba(0,150,62,.13);display:flex;align-items:center;gap:8px;font-size:12px;color:#00C853;flex-shrink:0}
+.status-dot{width:6px;height:6px;border-radius:50%;background:#00C853;animation:pulse 2s infinite}
+
+/* Tips */
+.tip-banner{background:linear-gradient(135deg,#1A2D47,#132238);border:1px solid rgba(255,179,0,.2);border-radius:16px;padding:16px;margin:8px 16px;display:flex;gap:12px;align-items:flex-start;flex-shrink:0}
+.tip-banner .icon{font-size:20px;flex-shrink:0;margin-top:2px}
+.tip-banner p{font-size:13px;color:#FFB300;line-height:1.5;font-style:italic}
+
+/* Chat */
+.chat-area{flex:1;overflow-y:auto;padding:12px 16px 110px;display:flex;flex-direction:column;gap:10px}
+.msg-row{display:flex;align-items:flex-end;gap:8px}
+.msg-row.user{justify-content:flex-end}
+.msg-row.bot{justify-content:flex-start}
+.msg-bubble{padding:12px 16px;max-width:80%;font-size:14.5px;line-height:1.55;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.msg-bubble.user{background:#1B5E20;border-radius:18px 18px 4px 18px}
+.msg-bubble.bot{background:#1A2D47;border-radius:18px 18px 18px 4px;border:1px solid #1E3550}
+.msg-time{font-size:11px;color:#5A6A7A;margin-top:4px}
+.msg-row.user .msg-time{text-align:right}
+.typing{color:#8899AA;font-size:14px}
+
+/* Input bar */
+.input-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:420px;padding:12px 16px 24px;background:linear-gradient(transparent,#0A1628 20%);display:flex;gap:10px;align-items:center}
+.chat-input{flex:1;background:#1A2D47;color:#E8ECF0;border:1.5px solid #1E3550;border-radius:24px;padding:14px 20px;font-size:15px;outline:none}
+.chat-input:focus{border-color:#00C853}
+.send-btn{background:#00C853;border:none;border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 12px rgba(0,200,83,.3);color:#000;font-size:20px;font-weight:900}
+
+/* Menu */
+.menu-item{display:flex;align-items:center;gap:16px;padding:18px 20px;background:#132238;border-radius:16px;border:1px solid #1E3550;margin-bottom:10px}
+.menu-item.disabled{opacity:.5}
+.menu-icon{font-size:28px;width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:#1A2D47;border-radius:14px;flex-shrink:0}
+.menu-title{font-size:15px;font-weight:700}
+.menu-desc{font-size:12.5px;color:#8899AA;margin-top:4px}
+.profile-card{padding:24px 20px 16px;background:#132238;border-bottom:1px solid #1E3550;flex-shrink:0}
+.profile-avatar{width:56px;height:56px;border-radius:50%;background:rgba(0,200,83,.13);display:flex;align-items:center;justify-content:center;font-size:28px;color:#00C853;font-weight:900}
+.referral-banner{padding:16px 20px 32px;background:#132238;border-top:1px solid #1E3550;flex-shrink:0}
+.referral-box{background:linear-gradient(135deg,rgba(255,179,0,.08),rgba(255,179,0,.02));border:1px solid rgba(255,179,0,.2);border-radius:16px;padding:16px;display:flex;align-items:center;gap:12px}
+.referral-box .title{font-size:14px;font-weight:800;color:#FFB300}
+.referral-box .desc{font-size:12px;color:#8899AA;margin-top:4px}
+
+/* Fraud */
+.fraud-card{background:#132238;border:1px solid #1E3550;border-radius:16px;padding:20px;margin-bottom:12px;cursor:pointer;transition:border .2s}
+.fraud-card.open{border-color:#FF5252}
+.fraud-header{display:flex;align-items:center;gap:12px}
+.fraud-icon{font-size:32px}
+.fraud-title{font-size:16px;font-weight:800;color:#FF5252}
+.fraud-detail{margin-top:12px;padding-top:12px;border-top:1px solid #1E3550;display:none}
+.fraud-card.open .fraud-detail{display:block}
+.fraud-desc{font-size:14px;color:#8899AA;line-height:1.55}
+.check-box{padding:20px;background:#132238;border-radius:16px;border:1px solid rgba(0,200,83,.2);margin-top:8px}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+<!-- SPLASH -->
+<div class="screen splash active" id="screen-splash">
+  <div class="splash-icon">🤝</div>
+  <h1>SOM</h1>
+  <p class="subtitle">Sahabat Orang Miskin</p>
+  <p class="desc">Teman pintar di sakumu. Bantu atur uang, hindari penipu, dan jalani hidup lebih baik.</p>
+  <p class="tagline">💚 Karena semua orang berhak punya sahabat yang peduli</p>
+  <button class="btn" onclick="showScreen('activate')">Mulai Sekarang</button>
+  <div class="price-tag">
+    <span class="amount">Rp 100.000</span>
+    <span class="period">/bulan</span>
+  </div>
+</div>
+
+<!-- ACTIVATE -->
+<div class="screen form-screen" id="screen-activate">
+  <div class="fade-up">
+    <div class="icon">🔑</div>
+    <h2>Aktivasi SOM</h2>
+    <p class="desc">Masukkan kode 6 angka dari penjual SOM-mu</p>
+    <p class="label">Kode Aktivasi</p>
+    <input class="input input-otp" id="otp-input" type="tel" maxlength="6" placeholder="000000" inputmode="numeric">
+    <p class="error" id="otp-error" style="display:none"></p>
+    <button class="btn" style="margin-top:24px" onclick="activateOtp()">Aktifkan →</button>
+    <div class="info-box">
+      <p>💡 Belum punya kode? Beli SOM di warung, counter HP, atau tanya teman yang jual SOM. Rp 100.000/bulan.</p>
+    </div>
+    <p class="hint">Demo: masukkan 6 angka apapun</p>
+  </div>
+</div>
+
+<!-- NICKNAME -->
+<div class="screen form-screen" id="screen-nickname">
+  <div class="fade-up">
+    <div class="icon">👋</div>
+    <h2>Hai! Siapa nama panggilanmu?</h2>
+    <p class="desc">Nama panggilan aja, nggak perlu KTP. Ini rahasiamu.</p>
+    <p class="label">Nama Panggilan</p>
+    <input class="input" id="name-input" placeholder="contoh: Ayu, Budi, Mama Sri..." maxlength="20">
+    <button class="btn" id="name-btn" style="margin-top:24px;opacity:.4" onclick="setNickname()" disabled>Ayo Mulai! 🤝</button>
+    <p class="hint">🔒 SOM tidak menyimpan data pribadimu. Aman.</p>
+  </div>
+</div>
+
+<!-- CHAT -->
+<div class="screen" id="screen-chat">
+  <div class="header">
+    <h1>🤝 SOM</h1>
+    <div style="display:flex;gap:4px">
+      <button class="header-btn" onclick="showScreen('fraud')">🛡️</button>
+      <button class="header-btn" onclick="showScreen('menu')">☰</button>
+    </div>
+  </div>
+  <div class="status-bar">
+    <div class="status-dot"></div>
+    <span id="status-text">SOM aktif — siap bantu kamu</span>
+  </div>
+  <div class="tip-banner" id="tip-banner">
+    <span class="icon">💡</span>
+    <p id="tip-text"></p>
+  </div>
+  <div class="chat-area" id="chat-area"></div>
+  <div class="input-bar">
+    <input class="chat-input" id="chat-input" placeholder="Cerita ke SOM..." enterkeyhint="send">
+    <button class="send-btn" onclick="sendMessage()">↑</button>
+  </div>
+</div>
+
+<!-- MENU -->
+<div class="screen" id="screen-menu">
+  <div class="header">
+    <button class="header-btn" onclick="showScreen('chat')">←</button>
+    <h1 style="color:#00C853;font-size:16px">Menu</h1>
+    <div style="width:38px"></div>
+  </div>
+  <div class="profile-card">
+    <div style="display:flex;align-items:center;gap:16px">
+      <div class="profile-avatar" id="menu-avatar"></div>
+      <div>
+        <p style="font-size:18px;font-weight:800" id="menu-name"></p>
+        <p style="font-size:13px;color:#00C853;margin-top:2px">✓ SOM Aktif — 28 hari tersisa</p>
+      </div>
+    </div>
+  </div>
+  <div style="padding:16px;overflow-y:auto;flex:1" id="menu-items"></div>
+  <div class="referral-banner">
+    <div class="referral-box">
+      <span style="font-size:28px">💰</span>
+      <div style="flex:1">
+        <p class="title">Jual SOM, Dapat Komisi!</p>
+        <p class="desc">Rp 20.000 per aktivasi. Jual ke teman, tetangga, rekan kerja.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FRAUD -->
+<div class="screen" id="screen-fraud">
+  <div class="header">
+    <button class="header-btn" onclick="showScreen(prevScreen)">←</button>
+    <h1 style="color:#FF5252;font-size:16px">🛡️ Jangan Kena Penipu!</h1>
+    <div style="width:38px"></div>
+  </div>
+  <div style="padding:12px 16px 4px;flex-shrink:0">
+    <p style="font-size:13px;color:#8899AA;line-height:1.5">Kenali modus-modus penipuan. Kalau ragu, tanya SOM dulu sebelum transfer uang!</p>
+  </div>
+  <div style="padding:8px 16px 32px;overflow-y:auto;flex:1" id="fraud-list"></div>
+</div>
+
+</div>
+
+<script>
+// State
+let userName = '';
+let currentScreen = 'splash';
+let prevScreen = 'chat';
+let messages = [];
+
+// Data
+const TIPS = [
+  "Gaji masuk? Langsung pisahkan: sewa, makan, transport. Sisanya baru boleh dipakai.",
+  "Sebelum beli, tanya: 'Butuh atau mau?' Kalau cuma mau — tunggu 3 hari.",
+  "Catat semua pengeluaran. Tulis di notes HP. Setiap malam review.",
+  "Jangan malu bawa bekal. Nasi dari rumah Rp 3.000. Nasi bungkus Rp 15.000. Sebulan hemat Rp 360.000.",
+  "Cicilan motor terlalu berat? Hitung total: harga cash vs kredit. Biasanya 2x lipat.",
+  "Darurat = hanya sakit, kecelakaan, kehilangan kerja. Bukan HP baru.",
+  "Punya utang? Bayar yang bunga tertinggi dulu. Pinjol > kartu kredit > teman > keluarga.",
+  "Minum air putih, bukan beli minuman kemasan. Hemat Rp 5.000-10.000/hari.",
+  "Belanja di pasar tradisional. Lebih murah dari minimarket. Bisa nawar.",
+  "Tabung recehan. Rp 2.000/hari = Rp 60.000/bulan. Kecil tapi konsisten."
+];
+
+const FRAUDS = [
+  {icon:"📱",title:"Mama Minta Pulsa",desc:"SMS dari nomor tidak dikenal: 'Nak, tolong isi pulsa Mama.' Jangan transfer! Telepon langsung ke nomor Mama yang asli."},
+  {icon:"🦈",title:"Pinjol Ilegal",desc:"Pinjaman online yang minta akses kontak & foto. Mereka akan teror semua kontakmu. Cek OJK sebelum pinjam! Hubungi OJK: 157."},
+  {icon:"💼",title:"Loker Palsu",desc:"Lowongan kerja minta transfer uang untuk 'seragam' atau 'training'. Kerja yang bener TIDAK pernah minta uang di depan."},
+  {icon:"🎰",title:"Undian Berhadiah",desc:"WhatsApp bilang kamu menang mobil/HP. Minta transfer pajak hadiah. PALSU 100%. Hapus langsung."},
+  {icon:"📈",title:"Investasi Bodong",desc:"Janji untung 10-50% per bulan? PASTI TIPU. Uang dari orang baru bayar orang lama. Kamu yang terakhir masuk = rugi total."},
+  {icon:"📦",title:"Penipuan COD",desc:"Paket COD yang tidak kamu pesan. Jangan bayar! Tolak paket, hubungi marketplace resmi."},
+  {icon:"💸",title:"Arisan Online",desc:"Arisan WhatsApp dengan orang tidak dikenal. Bandar kabur setelah kumpul uang. Arisan HANYA dengan orang yang kamu kenal langsung."},
+  {icon:"🏦",title:"Modus Salah Transfer",desc:"'Kak, saya salah transfer ke rekening kamu, tolong balikin.' Jangan transfer balik — ini modus pencucian uang. Lapor ke bank."}
+];
+
+const MENU_ITEMS = [
+  {icon:"💬",title:"Chat dengan SOM",desc:"Curhat, tanya, minta saran",screen:"chat"},
+  {icon:"🛡️",title:"Jangan Kena Penipu!",desc:"Kenali modus penipuan terbaru",screen:"fraud"},
+  {icon:"📊",title:"Hitung Uangku",desc:"Berapa masuk, berapa keluar (segera)"},
+  {icon:"🎓",title:"Belajar Pintar",desc:"Tips keuangan harian (segera)"},
+  {icon:"🆘",title:"Darurat",desc:"Polisi 110 · Ambulans 118 · OJK 157"},
+  {icon:"👥",title:"Ajak Teman",desc:"Dapat komisi Rp 20.000/teman (segera)"}
+];
+
+function getResponse(text) {
+  const l = text.toLowerCase();
+  if (l.includes('gadai') || l.includes('jual motor'))
+    return `Gadai motor? Pikir dulu ${userName}: tanpa motor, gimana kerja? Gimana cari uang? Motor itu alat cari nafkah, bukan jaminan utang. Cari cara lain dulu.`;
+  if (l.includes('lapar') || l.includes('makan') || l.includes('laper'))
+    return `${userName}, kalau lagi nggak punya uang makan — jangan malu minta tolong tetangga atau teman dekat. Itu bukan memalukan, itu manusiawi. Besok kita atur biar nggak kejadian lagi.`;
+  if (l.includes('minum') || l.includes('bir') || l.includes('alkohol'))
+    return `Minum biar lupa masalah? Itu cuma pinjam ketenangan, ${userName}. Besok masalahnya masih ada, ditambah badan sakit dan uang habis. Ayo kita cari jalan keluar yang beneran.`;
+  if (l.includes('gaji') || l.includes('uang') || l.includes('bayar'))
+    return `Gaji ${userName} berapa sebulan? Kita bikin rencana bareng. Nggak usah malu, di sini aman. Aku sahabatmu.`;
+  if (l.includes('tipu') || l.includes('penipu') || l.includes('scam') || l.includes('transfer'))
+    return `Wah, hati-hati ${userName}! Coba ceritain lebih detail. Aku bantu cek apakah ini penipuan. Jangan transfer dulu sebelum yakin!`;
+  if (l.includes('utang') || l.includes('pinjam') || l.includes('cicilan') || l.includes('pinjol') || l.includes('tagih'))
+    return `Utang memang berat, ${userName}. Tapi bisa diatur. Pertama: tulis semua utang — berapa, ke siapa, bunga berapa. Kita susun strategi bareng. Bayar yang bunga paling tinggi dulu.`;
+  if (l.includes('capek') || l.includes('sedih') || l.includes('lelah') || l.includes('susah') || l.includes('nangis'))
+    return `Aku dengar kamu, ${userName}. Hidup memang berat kadang. Tapi kamu sudah kuat sampai di sini. Mau cerita lebih? Aku di sini.`;
+  if (l.includes('kerja') || l.includes('bos') || l.includes('gak ada kerjaan'))
+    return `Soal kerja ya, ${userName}? Cerita dulu situasinya. Kerja apa sekarang, jam berapa, gaji berapa? Kita lihat bareng ada peluang yang lebih baik nggak.`;
+  if (l.includes('anak') || l.includes('sekolah') || l.includes('bayar sekolah'))
+    return `Pendidikan anak memang penting, ${userName}. Coba cek bantuan dari pemerintah: KIP (Kartu Indonesia Pintar) atau BOS. Ke kelurahan tanya langsung.`;
+  if (l.includes('sakit') || l.includes('rumah sakit') || l.includes('obat'))
+    return `Kalau sakit, jangan ditunda. Punya BPJS? Kalau belum, daftar sekarang. Iuran kelas 3 cuma Rp 35.000/bulan. Bisa berobat gratis di puskesmas dan RS.`;
+  return `Aku ngerti, ${userName}. Cerita terus, aku dengerin. Kita cari jalan keluarnya bareng-bareng. Nggak usah buru-buru.`;
+}
+
+function showScreen(name) {
+  if (name !== currentScreen) prevScreen = currentScreen;
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  currentScreen = name;
+  if (name === 'chat') {
+    document.getElementById('status-text').textContent = `SOM aktif — siap bantu ${userName}`;
+    scrollChat();
+    setTimeout(() => document.getElementById('chat-input').focus(), 100);
+  }
+}
+
+function activateOtp() {
+  const otp = document.getElementById('otp-input').value;
+  if (otp.length === 6) {
+    showScreen('nickname');
+    setTimeout(() => document.getElementById('name-input').focus(), 100);
+  } else {
+    const err = document.getElementById('otp-error');
+    err.textContent = 'Kode OTP harus 6 angka';
+    err.style.display = 'block';
+  }
+}
+
+function setNickname() {
+  const name = document.getElementById('name-input').value.trim();
+  if (name.length >= 2) {
+    userName = name;
+    initChat();
+    initMenu();
+    initFraud();
+    showScreen('chat');
+  }
+}
+
+function initChat() {
+  const tipEl = document.getElementById('tip-text');
+  tipEl.textContent = TIPS[Math.floor(Math.random() * TIPS.length)];
+  
+  const area = document.getElementById('chat-area');
+  area.innerHTML = '';
+  messages = [];
+  
+  setTimeout(() => {
+    addBotMessage(`Hai ${userName}! Aku SOM, sahabatmu. 🤝\n\nCerita aja, mau curhat soal apa hari ini? Soal uang, kerjaan, utang, atau apa aja — aku dengerin.`);
+  }, 600);
+}
+
+function initMenu() {
+  document.getElementById('menu-avatar').textContent = userName.charAt(0).toUpperCase();
+  document.getElementById('menu-name').textContent = userName;
+  
+  const container = document.getElementById('menu-items');
+  container.innerHTML = '';
+  MENU_ITEMS.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'menu-item' + (item.screen ? '' : ' disabled');
+    if (item.screen) div.onclick = () => showScreen(item.screen);
+    div.innerHTML = `
+      <div class="menu-icon">${item.icon}</div>
+      <div style="flex:1">
+        <p class="menu-title">${item.title}</p>
+        <p class="menu-desc">${item.desc}</p>
+      </div>
+      <span style="color:#5A6A7A;font-size:18px">›</span>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function initFraud() {
+  const container = document.getElementById('fraud-list');
+  container.innerHTML = '';
+  FRAUDS.forEach((f, i) => {
+    const div = document.createElement('div');
+    div.className = 'fraud-card';
+    div.onclick = () => {
+      div.classList.toggle('open');
+    };
+    div.innerHTML = `
+      <div class="fraud-header">
+        <span class="fraud-icon">${f.icon}</span>
+        <span class="fraud-title">${f.title}</span>
+      </div>
+      <div class="fraud-detail">
+        <p class="fraud-desc">${f.desc}</p>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+  
+  const check = document.createElement('div');
+  check.className = 'check-box';
+  check.innerHTML = `
+    <p style="font-size:14px;font-weight:700;color:#00C853;margin-bottom:8px">🔍 Cek Penipuan</p>
+    <p style="font-size:13px;color:#8899AA;line-height:1.5">Ragu sama tawaran? Balik ke chat dan ceritakan situasinya. SOM bantu analisa apakah ini penipuan.</p>
+  `;
+  container.appendChild(check);
+}
+
+function getTime() {
+  return new Date().toLocaleTimeString('id-ID', {hour:'2-digit',minute:'2-digit'});
+}
+
+function addBotMessage(text) {
+  messages.push({text, isUser: false, time: getTime()});
+  renderMessages();
+}
+
+function addUserMessage(text) {
+  messages.push({text, isUser: true, time: getTime()});
+  renderMessages();
+}
+
+function renderMessages() {
+  const area = document.getElementById('chat-area');
+  area.innerHTML = '';
+  messages.forEach(msg => {
+    const row = document.createElement('div');
+    row.className = 'msg-row ' + (msg.isUser ? 'user' : 'bot') + ' slide-in';
+    
+    const bubble = document.createElement('div');
+    bubble.className = 'msg-bubble ' + (msg.isUser ? 'user' : 'bot');
+    bubble.textContent = msg.text;
+    
+    const time = document.createElement('div');
+    time.className = 'msg-time';
+    time.textContent = msg.time;
+    
+    const wrap = document.createElement('div');
+    wrap.appendChild(bubble);
+    wrap.appendChild(time);
+    row.appendChild(wrap);
+    area.appendChild(row);
+  });
+  scrollChat();
+}
+
+function scrollChat() {
+  const area = document.getElementById('chat-area');
+  setTimeout(() => { area.scrollTop = area.scrollHeight; }, 50);
+}
+
+function showTyping() {
+  const area = document.getElementById('chat-area');
+  const row = document.createElement('div');
+  row.className = 'msg-row bot';
+  row.id = 'typing-indicator';
+  row.innerHTML = '<div><div class="msg-bubble bot typing" style="color:#8899AA">SOM sedang mengetik...</div></div>';
+  area.appendChild(row);
+  scrollChat();
+}
+
+function hideTyping() {
+  const el = document.getElementById('typing-indicator');
+  if (el) el.remove();
+}
+
+function sendMessage() {
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+  
+  addUserMessage(text);
+  input.value = '';
+  
+  showTyping();
+  
+  const delay = 800 + Math.random() * 800;
+  setTimeout(() => {
+    hideTyping();
+    addBotMessage(getResponse(text));
+  }, delay);
+}
+
+// Event listeners
+document.getElementById('otp-input').addEventListener('input', function(e) {
+  this.value = this.value.replace(/\D/g, '');
+  document.getElementById('otp-error').style.display = 'none';
+});
+
+document.getElementById('otp-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') activateOtp();
+});
+
+document.getElementById('name-input').addEventListener('input', function() {
+  const btn = document.getElementById('name-btn');
+  if (this.value.trim().length >= 2) {
+    btn.disabled = false;
+    btn.style.opacity = '1';
+  } else {
+    btn.disabled = true;
+    btn.style.opacity = '.4';
+  }
+});
+
+document.getElementById('name-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') setNickname();
+});
+
+document.getElementById('chat-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') sendMessage();
+});
+
+// Save/restore from localStorage for offline
+try {
+  const saved = localStorage.getItem('som_user');
+  if (saved) {
+    const data = JSON.parse(saved);
+    userName = data.name;
+    messages = data.messages || [];
+    initMenu();
+    initFraud();
+    document.getElementById('tip-text').textContent = TIPS[Math.floor(Math.random() * TIPS.length)];
+    document.getElementById('status-text').textContent = `SOM aktif — siap bantu ${userName}`;
+    renderMessages();
+    showScreen('chat');
+  }
+} catch(e) {}
+
+// Auto-save on message
+const origAdd = addBotMessage;
+const origAddU = addUserMessage;
+function saveState() {
+  try { localStorage.setItem('som_user', JSON.stringify({name: userName, messages: messages.slice(-50)})); } catch(e) {}
+}
+const _origAddBot = addBotMessage;
+addBotMessage = function(t) { _origAddBot(t); saveState(); };
+const _origAddUser = addUserMessage;
+addUserMessage = function(t) { _origAddUser(t); saveState(); };
+</script>
+</body>
+</html>
